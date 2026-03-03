@@ -1,0 +1,29 @@
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(180deg, #1a0000 0%, #0a0a0a 100%);
+  border-bottom: 2px solid #8b0000;
+}
+
+.hero h1 {
+  color: #cc0000;
+  font-size: 3rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  color: #999;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}

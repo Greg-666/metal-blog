@@ -1,0 +1,12 @@
+
+<div class="home">
+  <div class="hero">
+    <h1>🤘 Bienvenue sur MetalBlog</h1>
+    <p>Actualités, reviews et histoire du Metal sous toutes ses formes</p>
+  </div>
+  <div class="articles-grid">
+    @for (article of articles; track article.id) {
+      <app-article-card [article]="article" />
+    }
+  </div>
+</div>

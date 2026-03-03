@@ -1,0 +1,30 @@
+<nav class="navbar">
+  <div class="navbar-brand">
+    <a routerLink="/">🤘 MetalBlog</a>
+  </div>
+
+  <div class="navbar-search">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="search()"
+      placeholder="Rechercher..." />
+    <button (click)="search()">🔍</button>
+  </div>
+
+  <ul class="navbar-links">
+    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Accueil</a></li>
+    <li><a routerLink="/categories" routerLinkActive="active">Catégories</a></li>
+    <li><a routerLink="/about" routerLinkActive="active">À propos</a></li>
+
+    @if (authService.currentUser$ | async; as user) {
+      @if (user.role === 'admin') {
+        <li><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
+      }
+      <li><span class="username">👤 {{ user.username }}</span></li>
+      <li><button class="btn-logout" (click)="logout()">Déconnexion</button></li>
+    } @else {
+      <li><a routerLink="/login" routerLinkActive="active">Connexion</a></li>
+    }
+  </ul>
+</nav>

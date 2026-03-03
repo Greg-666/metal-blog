@@ -1,0 +1,91 @@
+.about-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.about-hero {
+  text-align: center;
+  padding: 3rem 0;
+  border-bottom: 1px solid #1a1a1a;
+  margin-bottom: 3rem;
+}
+
+.about-hero h1 {
+  color: #cc0000;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.about-hero p {
+  color: #666;
+  letter-spacing: 2px;
+}
+
+.about-section {
+  margin-bottom: 3rem;
+}
+
+.about-section h2 {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #8b0000;
+}
+
+.about-section p {
+  color: #999;
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.team-card {
+  background-color: #111;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: border-color 0.3s;
+}
+
+.team-card:hover {
+  border-color: #8b0000;
+}
+
+.team-avatar {
+  font-size: 2.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.team-card h3 {
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+
+.team-card p {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.contact {
+  background-color: #111;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.email {
+  color: #cc0000;
+  font-weight: bold;
+}

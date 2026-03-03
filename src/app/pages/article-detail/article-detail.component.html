@@ -1,0 +1,65 @@
+@if (article) {
+  <div class="article-detail">
+    <div class="article-hero" [style.backgroundImage]="'url(' + article.image + ')'">
+      <div class="article-hero-overlay">
+        <span class="category">{{ article.category }}</span>
+        <h1>{{ article.title }}</h1>
+        <div class="article-meta">
+          <span>✍️ {{ article.author }}</span>
+          <span>📅 {{ article.date | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="article-body">
+      <div class="tags">
+        @for (tag of article.tags; track tag) {
+          <span class="tag"># {{ tag }}</span>
+        }
+      </div>
+      <p class="content">{{ article.content }}</p>
+    </div>
+
+    <div class="comments-section">
+      <h2>💬 Commentaires ({{ comments.length }})</h2>
+
+      @if (comments.length === 0) {
+        <p class="no-comments">Aucun commentaire pour l'instant. Sois le premier ! 🤘</p>
+      }
+
+      @for (comment of comments; track comment.id) {
+        <div class="comment">
+          <div class="comment-header">
+            <span class="comment-author">👤 {{ comment.author }}</span>
+            <span class="comment-date">{{ comment.date | date:'dd/MM/yyyy HH:mm' }}</span>
+            @if (authService.isModerator()) {
+              <button class="btn-delete-comment" (click)="deleteComment(comment.id)">🗑️</button>
+            }
+          </div>
+          <p class="comment-content">{{ comment.content }}</p>
+        </div>
+      }
+
+      @if (authService.isLoggedIn()) {
+        <div class="comment-form">
+          <h3>Laisser un commentaire</h3>
+          <textarea
+            [(ngModel)]="newComment"
+            placeholder="Ton commentaire metal... 🤘"
+            rows="4">
+          </textarea>
+          <button class="btn-submit" (click)="submitComment()">Envoyer 🤘</button>
+        </div>
+      } @else {
+        <div class="login-prompt">
+          <p>Tu dois être <a routerLink="/login">connecté</a> pour commenter.</p>
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="not-found">
+    <h2>Article introuvable 🤘</h2>
+    <a routerLink="/">Retour à l'accueil</a>
+  </div>
+}

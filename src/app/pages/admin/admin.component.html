@@ -1,0 +1,85 @@
+<div class="admin-page">
+  <div class="admin-header">
+    <h1>🛡️ Tableau de bord Admin</h1>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="tab" [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">
+      👥 Membres approuvés ({{ users.length }})
+    </button>
+    <button class="tab" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">
+      ⏳ Demandes en attente ({{ pendingUsers.length }})
+    </button>
+    <button class="tab" [class.active]="activeTab === 'articles'" (click)="activeTab = 'articles'">
+      📝 Articles ({{ articles.length }})
+    </button>
+  </div>
+
+  @if (activeTab === 'users') {
+    <div class="admin-section">
+      @if (users.length === 0) {
+        <p class="empty">Aucun membre approuvé pour l'instant.</p>
+      }
+      @for (user of users; track user.id) {
+        <div class="user-card">
+          <div class="user-info">
+            <span class="username">👤 {{ user.username }}</span>
+            <span class="email">{{ user.email }}</span>
+            <span class="role" [class.moderator]="user.role === 'moderator'">
+              {{ user.role === 'moderator' ? '🛡️ Modérateur' : '👥 Membre' }}
+            </span>
+          </div>
+          <div class="user-actions">
+            @if (user.role === 'member') {
+              <button class="btn-promote" (click)="promoteToModerator(user)">Promouvoir modérateur</button>
+            } @else if (user.role === 'moderator') {
+              <button class="btn-demote" (click)="demoteToMember(user)">Rétrograder membre</button>
+            }
+            <button class="btn-delete" (click)="deleteUser(user)">Supprimer</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (activeTab === 'pending') {
+    <div class="admin-section">
+      @if (pendingUsers.length === 0) {
+        <p class="empty">Aucune demande en attente.</p>
+      }
+      @for (user of pendingUsers; track user.id) {
+        <div class="user-card pending">
+          <div class="user-info">
+            <span class="username">👤 {{ user.username }}</span>
+            <span class="email">{{ user.email }}</span>
+          </div>
+          <div class="user-actions">
+            <button class="btn-approve" (click)="approveUser(user)">✅ Approuver</button>
+            <button class="btn-delete" (click)="rejectUser(user)">❌ Refuser</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (activeTab === 'articles') {
+    <div class="admin-section">
+      <div class="admin-actions">
+        <a routerLink="/admin/article/new" class="btn-new">✏️ Nouvel article</a>
+      </div>
+      @for (article of articles; track article.id) {
+        <div class="article-card">
+          <div class="article-info">
+            <span class="category">{{ article.category }}</span>
+            <h3>{{ article.title }}</h3>
+            <span class="meta">✍️ {{ article.author }} — 📅 {{ article.date | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="article-actions">
+            <a [routerLink]="['/admin/article/edit', article.id]" class="btn-edit">✏️ Modifier</a>
+            <button class="btn-delete" (click)="deleteArticle(article)">🗑️ Supprimer</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

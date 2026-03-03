@@ -1,1 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0a0a0a;
+  color: #ccc;
+  font-family: 'Georgia', serif;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: 'Arial Black', sans-serif;
+}
+
+a {
+  color: #cc0000;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ff0000;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8b0000;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #cc0000;
+}

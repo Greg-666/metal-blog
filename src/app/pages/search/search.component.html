@@ -1,0 +1,21 @@
+<div class="search-page">
+  <div class="search-header">
+    <h1>🔍 Recherche</h1>
+    @if (query) {
+      <p>{{ results.length }} résultat(s) pour <span class="query">"{{ query }}"</span></p>
+    }
+  </div>
+
+  @if (results.length > 0) {
+    <div class="articles-grid">
+      @for (article of results; track article.id) {
+        <app-article-card [article]="article" />
+      }
+    </div>
+  } @else if (query) {
+    <div class="no-results">
+      <p>Aucun article trouvé pour "{{ query }}" 😢</p>
+      <p>Essaie avec un autre mot-clé !</p>
+    </div>
+  }
+</div>

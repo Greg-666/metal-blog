@@ -1,0 +1,23 @@
+<div class="categories-page">
+  <div class="categories-header">
+    <h1>Catégories</h1>
+    <p>Explore le metal par genre</p>
+  </div>
+
+  <div class="categories-tabs">
+    @for (category of categories; track category) {
+      <button
+        class="tab"
+        [class.active]="selectedCategory === category"
+        (click)="selectCategory(category)">
+        {{ category }}
+      </button>
+    }
+  </div>
+
+  <div class="articles-grid">
+    @for (article of filteredArticles; track article.id) {
+      <app-article-card [article]="article" />
+    }
+  </div>
+</div>

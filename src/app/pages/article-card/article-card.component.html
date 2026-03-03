@@ -1,0 +1,13 @@
+
+<div class="card">
+  <img [src]="article.image" [alt]="article.title" />
+  <div class="card-body">
+    <span class="category">{{ article.category }}</span>
+    <h2>{{ article.title }}</h2>
+    <p class="summary">{{ article.summary }}</p>
+    <div class="card-footer">
+      <span class="date">{{ article.date | date:'dd/MM/yyyy' }}</span>
+      <a [routerLink]="['/article', article.id]" class="read-more">Lire la suite →</a>
+    </div>
+  </div>
+</div>

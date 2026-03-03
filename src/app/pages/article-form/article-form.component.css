@@ -1,0 +1,133 @@
+.form-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form-header {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.form-header h1 {
+  color: #cc0000;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+.form-container {
+  background-color: #111;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+label {
+  display: block;
+  color: #999;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+input, select, textarea {
+  width: 100%;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+  font-family: Georgia, serif;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #8b0000;
+}
+
+select option {
+  background-color: #1a1a1a;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.image-preview {
+  margin-top: 0.8rem;
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #333;
+}
+
+.tags-preview {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+
+.tag {
+  background-color: #1a1a1a;
+  color: #cc0000;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  border: 1px solid #333;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  border: 1px solid #333;
+  color: #999;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+  border-color: #666;
+  color: #fff;
+}
+
+.btn-submit {
+  background-color: #8b0000;
+  border: none;
+  color: #fff;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+  background-color: #cc0000;
+}

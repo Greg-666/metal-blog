@@ -40,3 +40,8 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+# Fichiers sensibles
+db.json
+hash-password.mjs
+public/faucheuse.mp4
+backend/.env

@@ -1,0 +1,206 @@
+.admin-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.admin-header {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.admin-header h1 {
+  color: #cc0000;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  background-color: #111;
+  color: #999;
+  border: 1px solid #333;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.tab:hover, .tab.active {
+  background-color: #8b0000;
+  border-color: #8b0000;
+  color: #fff;
+}
+
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.empty {
+  color: #666;
+  text-align: center;
+  padding: 2rem;
+}
+
+.user-card, .article-card {
+  background-color: #111;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-card.pending {
+  border-color: #4a3800;
+}
+
+.user-info, .article-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.username {
+  color: #fff;
+  font-weight: bold;
+}
+
+.email {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.role {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.role.moderator {
+  color: #cc0000;
+}
+
+.article-info .category {
+  background-color: #8b0000;
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.article-info h3 {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.article-info .meta {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.user-actions, .article-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+button {
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s;
+}
+
+.btn-approve {
+  background-color: #004400;
+  color: #66ff66;
+  border: 1px solid #006600;
+}
+
+.btn-approve:hover {
+  background-color: #006600;
+}
+
+.btn-promote {
+  background-color: #00004a;
+  color: #6666ff;
+  border: 1px solid #000088;
+}
+
+.btn-promote:hover {
+  background-color: #000088;
+}
+
+.btn-demote {
+  background-color: #2a2a00;
+  color: #ffff66;
+  border: 1px solid #444400;
+}
+
+.btn-demote:hover {
+  background-color: #444400;
+}
+
+.btn-delete {
+  background-color: #2a0000;
+  color: #ff6666;
+  border: 1px solid #8b0000;
+}
+
+.btn-delete:hover {
+  background-color: #8b0000;
+  color: #fff;
+}
+.admin-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.btn-new {
+  background-color: #004400;
+  color: #66ff66;
+  border: 1px solid #006600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+  text-decoration: none;
+}
+
+.btn-new:hover {
+  background-color: #006600;
+  color: #66ff66;
+}
+
+.btn-edit {
+  background-color: #00004a;
+  color: #6666ff;
+  border: 1px solid #000088;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: background-color 0.3s;
+  text-decoration: none;
+}
+
+.btn-edit:hover {
+  background-color: #000088;
+  color: #6666ff;
+}

@@ -1,0 +1,61 @@
+.categories-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.categories-header {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.categories-header h1 {
+  color: #cc0000;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.categories-header p {
+  color: #666;
+  letter-spacing: 2px;
+}
+
+.categories-tabs {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.tab {
+  background-color: #111;
+  color: #999;
+  border: 1px solid #333;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  border-color: #8b0000;
+  color: #fff;
+}
+
+.tab.active {
+  background-color: #8b0000;
+  border-color: #8b0000;
+  color: #fff;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
