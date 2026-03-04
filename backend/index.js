@@ -3,7 +3,7 @@ import pg from 'pg';
 import bcrypt from 'bcryptjs';
 import cors from 'cors';
 import dotenv from 'dotenv';
-
+import rateLimit from 'express-rate-limit';
 dotenv.config();
 
 const app = express();
@@ -17,13 +17,23 @@ const pool = new Pool({
   database: process.env.DB_NAME
 });
 
+
+// Limite de tentatives de connexion
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 tentatives maximum
+  message: { message: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
 app.use(cors());
 app.use(express.json());
 
 // =================== AUTH ===================
 
 // Login
-app.post('/auth/login', async (req, res) => {
+app.post('/auth/login', loginLimiter, async (req, res) => {
   const { email, password } = req.body;
   console.log('Login attempt:', email);
   try {
