@@ -21,6 +21,9 @@
       @if (user.role === 'admin') {
         <li><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
       }
+      @if (user.role === 'moderator') {
+        <li><a routerLink="/moderator" routerLinkActive="active">Modération</a></li>
+      }
       <li><span class="username">👤 {{ user.username }}</span></li>
       <li><button class="btn-logout" (click)="logout()">Déconnexion</button></li>
     } @else {

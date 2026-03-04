@@ -1,21 +1,32 @@
 <div class="admin-page">
   <div class="admin-header">
-    <h1>🛡️ Tableau de bord Admin</h1>
+    @if (authService.isAdmin()) {
+      <h1>🛡️ Tableau de bord Admin</h1>
+    } @else {
+      <h1>🛡️ Tableau de bord Modérateur</h1>
+    }
   </div>
 
   <div class="admin-tabs">
-    <button class="tab" [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">
-      👥 Membres approuvés ({{ users.length }})
-    </button>
-    <button class="tab" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">
-      ⏳ Demandes en attente ({{ pendingUsers.length }})
-    </button>
+    @if (authService.isAdmin()) {
+      <button class="tab" [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">
+        👥 Membres approuvés ({{ users.length }})
+      </button>
+      <button class="tab" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">
+        ⏳ Demandes en attente ({{ pendingUsers.length }})
+      </button>
+    }
     <button class="tab" [class.active]="activeTab === 'articles'" (click)="activeTab = 'articles'">
       📝 Articles ({{ articles.length }})
     </button>
+    @if (authService.isModerator() && !authService.isAdmin()) {
+      <button class="tab" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">
+        ⏳ Demandes en attente ({{ pendingUsers.length }})
+      </button>
+    }
   </div>
 
-  @if (activeTab === 'users') {
+  @if (activeTab === 'users' && authService.isAdmin()) {
     <div class="admin-section">
       @if (users.length === 0) {
         <p class="empty">Aucun membre approuvé pour l'instant.</p>
@@ -54,8 +65,12 @@
             <span class="email">{{ user.email }}</span>
           </div>
           <div class="user-actions">
-            <button class="btn-approve" (click)="approveUser(user)">✅ Approuver</button>
-            <button class="btn-delete" (click)="rejectUser(user)">❌ Refuser</button>
+            @if (authService.isAdmin()) {
+              <button class="btn-approve" (click)="approveUser(user)">✅ Approuver</button>
+              <button class="btn-delete" (click)="rejectUser(user)">❌ Refuser</button>
+            } @else {
+              <span class="pending-info">⏳ En attente de validation par l'admin</span>
+            }
           </div>
         </div>
       }
@@ -76,7 +91,9 @@
           </div>
           <div class="article-actions">
             <a [routerLink]="['/admin/article/edit', article.id]" class="btn-edit">✏️ Modifier</a>
-            <button class="btn-delete" (click)="deleteArticle(article)">🗑️ Supprimer</button>
+            @if (authService.isAdmin()) {
+              <button class="btn-delete" (click)="deleteArticle(article)">🗑️ Supprimer</button>
+            }
           </div>
         </div>
       }

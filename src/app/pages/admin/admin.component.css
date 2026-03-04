@@ -204,3 +204,8 @@ button {
   background-color: #000088;
   color: #6666ff;
 }
+.pending-info {
+  color: #666;
+  font-size: 0.85rem;
+  font-style: italic;
+}

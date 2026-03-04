@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, User } from '../../services/auth.service';
 import { DatePipe } from '@angular/common';
-import {RouterLink} from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 interface Article {
   id: number;
@@ -20,21 +20,24 @@ interface Article {
   styleUrl: './admin.component.css'
 })
 export class AdminComponent implements OnInit {
-  activeTab = 'users';
+  activeTab = 'articles';
   users: User[] = [];
   pendingUsers: User[] = [];
   articles: Article[] = [];
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient, public authService: AuthService) {}
 
   ngOnInit(): void {
-    this.loadUsers();
     this.loadArticles();
+    if (this.authService.isAdmin()) {
+      this.loadUsers();
+      this.activeTab = 'users';
+    }
   }
 
   loadUsers(): void {
     this.http.get<User[]>('http://localhost:3000/users').subscribe(users => {
-      this.users = users.filter(u => u.status === 'approved');
+      this.users = users.filter(u => u.status === 'approved' && u.role !== 'admin');
       this.pendingUsers = users.filter(u => u.status === 'pending');
     });
   }

@@ -26,7 +26,7 @@
 
 .footer-links h4,
 .footer-categories h4 {
-  color: #fff;
+  color: #aaa;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 0.85rem;
@@ -60,7 +60,7 @@
   text-align: center;
   padding: 1rem;
   border-top: 1px solid #1a1a1a;
-  color: #444;
+  color: #aaa;
   font-size: 0.85rem;
 }
 @media (max-width: 768px) {
