@@ -5,11 +5,12 @@ import { BlogService, Article } from '../../services/blog.service';
 import { AuthService } from '../../services/auth.service';
 import {DatePipe, isPlatformBrowser} from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {SafeUrlPipe} from '../../pipes/safe-url.pipe';
 
 @Component({
   selector: 'app-article-detail',
   standalone: true,
-  imports: [DatePipe, FormsModule, RouterLink],
+  imports: [DatePipe, FormsModule, RouterLink,SafeUrlPipe],
   templateUrl: './article-detail.component.html',
   styleUrl: './article-detail.component.css'
 })

@@ -24,9 +24,9 @@
             type="text"
             [(ngModel)]="customCategory"
             placeholder="Ex: Punk, Grunge, Noise..."
+            (input)="applyCustomCategory()"
             style="margin-top: 0.5rem" />
         }
-      </div>
       </div>
 
       <div class="form-group">
@@ -41,10 +41,40 @@
     </div>
 
     <div class="form-group">
-      <label>Image (URL)</label>
+      <label>Image principale (URL)</label>
       <input type="text" [(ngModel)]="article.image" placeholder="https://..." />
       @if (article.image) {
         <img class="image-preview" [src]="article.image" alt="preview" />
+      }
+    </div>
+
+    <div class="form-group">
+      <label>📸 Photos du concert (une URL par ligne)</label>
+      <textarea
+        [(ngModel)]="photoInput"
+        rows="4"
+        placeholder="https://photo1.jpg&#10;https://photo2.jpg&#10;https://photo3.jpg">
+      </textarea>
+      @if (article.photos && article.photos.length > 0) {
+        <div class="photos-preview">
+          @for (photo of article.photos; track photo) {
+            <img [src]="photo" alt="photo concert" />
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>🎥 Vidéo YouTube (URL)</label>
+      <input type="text" [(ngModel)]="article.video_url" placeholder="https://www.youtube.com/watch?v=..." />
+      @if (article.video_url) {
+        <div class="video-preview">
+          <iframe
+            [src]="article.video_url | safeUrl"
+            frameborder="0"
+            allowfullscreen>
+          </iframe>
+        </div>
       }
     </div>
 
@@ -70,4 +100,4 @@
       </button>
     </div>
   </div>
-
+</div>

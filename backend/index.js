@@ -159,9 +159,39 @@ app.get('/articles/:id', async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
-
 // Create article
 app.post('/articles', async (req, res) => {
+  const { title, category, date, author, summary, content, image, tags, photos, video_url } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO articles (title, category, date, author, summary, content, image, tags, photos, video_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
+      [title, category, date, author, summary, content, image, tags, photos || [], video_url || null]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Erreur create article:', err.message);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Update article
+app.put('/articles/:id', async (req, res) => {
+  const { id } = req.params;
+  const { title, category, date, author, summary, content, image, tags, photos, video_url } = req.body;
+  try {
+    const result = await pool.query(
+      'UPDATE articles SET title=$1, category=$2, date=$3, author=$4, summary=$5, content=$6, image=$7, tags=$8, photos=$9, video_url=$10 WHERE id=$11 RETURNING *',
+      [title, category, date, author, summary, content, image, tags, photos || [], video_url || null, id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Erreur update article:', err.message);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Create article
+/*app.post('/articles', async (req, res) => {
   const { title, category, date, author, summary, content, image, tags } = req.body;
   try {
     const result = await pool.query(
@@ -187,7 +217,7 @@ app.put('/articles/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Erreur serveur' });
   }
-});
+});*/
 
 // Delete article
 app.delete('/articles/:id', async (req, res) => {

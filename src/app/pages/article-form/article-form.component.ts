@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import {SafeUrlPipe} from '../../pipes/safe-url.pipe';
 
 interface Article {
   id?: number;
@@ -13,12 +14,14 @@ interface Article {
   content: string;
   image: string;
   tags: string[];
+  photos: string[];
+  video_url: string;
 }
 
 @Component({
   selector: 'app-article-form',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule,SafeUrlPipe],
   templateUrl: './article-form.component.html',
   styleUrl: './article-form.component.css'
 })
@@ -26,6 +29,9 @@ export class ArticleFormComponent implements OnInit {
   isEditMode = false;
   articleId: number | null = null;
   tagInput = '';
+  photoInput = '';
+  selectedCategory = '';
+  customCategory = '';
 
   article: Article = {
     title: '',
@@ -35,10 +41,11 @@ export class ArticleFormComponent implements OnInit {
     summary: '',
     content: '',
     image: '',
-    tags: []
+    tags: [],
+    photos: [],
+    video_url: ''
   };
-  selectedCategory = '';
-  customCategory = '';
+
   categories = [
     'Heavy Metal',
     'Thrash Metal',
@@ -47,8 +54,7 @@ export class ArticleFormComponent implements OnInit {
     'Doom Metal',
     'Power Metal',
     'Progressive Metal',
-    'Folk Metal',
-
+    'Folk Metal'
   ];
 
   constructor(
@@ -64,6 +70,7 @@ export class ArticleFormComponent implements OnInit {
       this.http.get<Article>(`http://localhost:3000/articles/${this.articleId}`).subscribe(article => {
         this.article = article;
         this.tagInput = article.tags.join(', ');
+        this.photoInput = article.photos ? article.photos.join('\n') : '';
         if (this.categories.includes(article.category)) {
           this.selectedCategory = article.category;
         } else {
@@ -73,9 +80,17 @@ export class ArticleFormComponent implements OnInit {
       });
     }
   }
+
   onCategoryChange(): void {
     if (this.selectedCategory !== 'autre') {
       this.article.category = this.selectedCategory;
+    }
+  }
+
+  applyCustomCategory(): void {
+    if (this.customCategory.trim()) {
+      this.categories.push(this.customCategory.trim());
+      this.article.category = this.customCategory.trim();
     }
   }
 
@@ -84,13 +99,29 @@ export class ArticleFormComponent implements OnInit {
     this.article.tags = tags;
   }
 
+  addPhotos(): void {
+    const photos = this.photoInput.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+    this.article.photos = photos;
+  }
+
+  getYoutubeEmbedUrl(url: string): string {
+    if (!url) return '';
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+    return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+  }
+
   onSubmit(): void {
     this.addTag();
+    this.addPhotos();
 
     if (this.selectedCategory === 'autre' && this.customCategory.trim()) {
       this.article.category = this.customCategory.trim();
     } else {
       this.article.category = this.selectedCategory;
+    }
+
+    if (this.article.video_url) {
+      this.article.video_url = this.getYoutubeEmbedUrl(this.article.video_url);
     }
 
     if (!this.article.title || !this.article.category || !this.article.content) {
@@ -110,14 +141,7 @@ export class ArticleFormComponent implements OnInit {
     }
   }
 
-
   cancel(): void {
     this.router.navigate(['/admin']);
-  }
-  applyCustomCategory(): void {
-    if (this.customCategory.trim()) {
-      this.categories.push(this.customCategory.trim());
-      this.article.category = this.customCategory.trim();
-    }
   }
 }

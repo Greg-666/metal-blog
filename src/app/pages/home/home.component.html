@@ -1,12 +1,28 @@
-
 <div class="home">
   <div class="hero">
     <h1>🤘 Bienvenue sur MetalBlog</h1>
     <p>Actualités, reviews et histoire du Metal sous toutes ses formes</p>
   </div>
-  <div class="articles-grid">
-    @for (article of articles; track article.id) {
-      <app-article-card [article]="article" />
-    }
+
+  <div class="featured-song">
+    <h2>🎵 Le son du moment</h2>
+    <div class="youtube-embed">
+      <iframe
+        src="https://www.youtube.com/embed/Wxwcr72VcKg"
+        title="Le son du moment"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+
+  <div class="articles-section">
+    <h2>📰 Derniers articles</h2>
+    <div class="articles-grid">
+      @for (article of articles; track article.id) {
+        <app-article-card [article]="article" />
+      }
+    </div>
   </div>
 </div>

@@ -25,6 +25,30 @@
         <a [href]="'https://www.linkedin.com/sharing/share-offsite/?url=' + currentUrl" target="_blank" class="share-btn linkedin">LinkedIn</a>
         <a [href]="'https://wa.me/?text=' + article.title + ' ' + currentUrl" target="_blank" class="share-btn whatsapp">WhatsApp</a>
       </div>
+      @if (article.photos && article.photos.length > 0) {
+        <div class="concert-photos">
+          <h2>📸 Photos du concert</h2>
+          <div class="photos-grid">
+            @for (photo of article.photos; track photo) {
+              <img [src]="photo" alt="photo concert" />
+            }
+          </div>
+        </div>
+      }
+
+      @if (article.video_url) {
+        <div class="concert-video">
+          <h2>🎥 Vidéo du concert</h2>
+          <div class="youtube-embed">
+            <iframe
+              [src]="article.video_url | safeUrl"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      }
 
       <p class="content">{{ article.content }}</p>
     </div>

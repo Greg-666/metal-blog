@@ -12,6 +12,8 @@ export interface Article {
   content: string;
   image: string;
   tags: string[];
+  photos?: string[];
+  video_url?: string;
 }
 
 @Injectable({
