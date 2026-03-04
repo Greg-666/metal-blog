@@ -27,3 +27,14 @@
   max-width: 1200px;
   margin: 0 auto;
 }
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+  }
+
+  .articles-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+}

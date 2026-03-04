@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { BlogService, Article } from '../../services/blog.service';
 import { ArticleCardComponent } from '../article-card/article-card.component';
 
@@ -23,7 +23,15 @@ export class SearchComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.query = params['q'] || '';
       if (this.query) {
-        this.results = this.blogService.searchArticles(this.query);
+        this.blogService.getArticles().subscribe(articles => {
+          const q = this.query.toLowerCase();
+          this.results = articles.filter(a =>
+            a.title.toLowerCase().includes(q) ||
+            a.category.toLowerCase().includes(q) ||
+            a.tags.some(t => t.toLowerCase().includes(q)) ||
+            a.author.toLowerCase().includes(q)
+          );
+        });
       }
     });
   }

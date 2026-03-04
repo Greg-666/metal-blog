@@ -1,16 +1,15 @@
-import {Component, OnInit} from '@angular/core';
-import {Article, BlogService} from '../../services/blog.service';
-import {ArticleCardComponent} from '../article-card/article-card.component';
+import { Component, OnInit } from '@angular/core';
+import { BlogService, Article } from '../../services/blog.service';
+import { ArticleCardComponent } from '../article-card/article-card.component';
 
 @Component({
   selector: 'app-categories',
-  imports: [
-    ArticleCardComponent
-  ],
+  standalone: true,
+  imports: [ArticleCardComponent],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.css'
 })
-export class CategoriesComponent implements OnInit{
+export class CategoriesComponent implements OnInit {
   categories: string[] = [];
   selectedCategory: string = '';
   filteredArticles: Article[] = [];
@@ -18,16 +17,19 @@ export class CategoriesComponent implements OnInit{
   constructor(private blogService: BlogService) {}
 
   ngOnInit(): void {
-
-    this.categories = this.blogService.getCategories();
-    this.selectedCategory = this.categories[0];
-    this.filteredArticles = this.blogService.getArticlesByCategory(this.selectedCategory);
+    this.blogService.getCategories().subscribe(categories => {
+      this.categories = categories;
+      if (categories.length > 0) {
+        this.selectedCategory = categories[0];
+        this.selectCategory(categories[0]);
+      }
+    });
   }
 
   selectCategory(category: string): void {
     this.selectedCategory = category;
-    this.filteredArticles = this.blogService.getArticlesByCategory(category);
+    this.blogService.getArticlesByCategory(category).subscribe(articles => {
+      this.filteredArticles = articles.filter(a => a.category === category);
+    });
   }
-
-
 }

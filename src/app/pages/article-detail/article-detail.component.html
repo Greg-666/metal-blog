@@ -17,6 +17,15 @@
           <span class="tag"># {{ tag }}</span>
         }
       </div>
+
+      <div class="share-buttons">
+        <span class="share-label">Partager 🤘</span>
+        <a [href]="'https://www.facebook.com/sharer/sharer.php?u=' + currentUrl" target="_blank" class="share-btn facebook">Facebook</a>
+        <a [href]="'https://twitter.com/intent/tweet?url=' + currentUrl + '&text=' + article.title" target="_blank" class="share-btn twitter">Twitter/X</a>
+        <a [href]="'https://www.linkedin.com/sharing/share-offsite/?url=' + currentUrl" target="_blank" class="share-btn linkedin">LinkedIn</a>
+        <a [href]="'https://wa.me/?text=' + article.title + ' ' + currentUrl" target="_blank" class="share-btn whatsapp">WhatsApp</a>
+      </div>
+
       <p class="content">{{ article.content }}</p>
     </div>
 

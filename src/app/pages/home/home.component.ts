@@ -1,23 +1,22 @@
-import {Component, OnInit} from '@angular/core';
-import {Article, BlogService} from '../../services/blog.service';
-import {ArticleCardComponent} from '../article-card/article-card.component';
+import { Component, OnInit } from '@angular/core';
+import { ArticleCardComponent } from '../article-card/article-card.component';
+import { BlogService, Article } from '../../services/blog.service';
 
 @Component({
   selector: 'app-home',
-  imports: [
-    ArticleCardComponent
-  ],
+  standalone: true,
+  imports: [ArticleCardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
+  articles: Article[] = [];
 
-  articles : Article[] = [];
-  constructor(private blogservice: BlogService) {
-  }
+  constructor(private blogService: BlogService) {}
 
   ngOnInit(): void {
-    this.articles = this.blogservice.getArticles();
+    this.blogService.getArticles().subscribe(articles => {
+      this.articles = articles;
+    });
   }
-
 }

@@ -41,3 +41,18 @@ a:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: #cc0000;
 }
+@media (max-width: 768px) {
+  .articles-grid {
+    grid-template-columns: 1fr !important;
+    padding: 1rem !important;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem !important;
+    letter-spacing: 2px !important;
+  }
+
+  .hero p {
+    font-size: 0.9rem !important;
+  }
+}
