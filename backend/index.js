@@ -4,6 +4,9 @@ import bcrypt from 'bcryptjs';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+
 dotenv.config();
 
 const app = express();
@@ -17,11 +20,19 @@ const pool = new Pool({
   database: process.env.DB_NAME
 });
 
+// Configuration Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS
+  }
+});
 
 // Limite de tentatives de connexion
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 tentatives maximum
+  windowMs: 15 * 60 * 1000,
+  max: 5,
   message: { message: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.' },
   standardHeaders: true,
   legacyHeaders: false
@@ -54,9 +65,10 @@ app.post('/auth/login', loginLimiter, async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
+
+// Register
 app.post('/auth/register', async (req, res) => {
   const { email, password, username } = req.body;
-  console.log('Register request:', req.body);
   try {
     const existing = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (existing.rows.length > 0) return res.status(400).json({ message: 'Cet email est déjà utilisé' });
@@ -67,7 +79,6 @@ app.post('/auth/register', async (req, res) => {
       [email, hashedPassword, username, 'member', 'pending']
     );
     const { password: _, ...userWithoutPassword } = result.rows[0];
-    console.log('User created:', userWithoutPassword);
     res.status(201).json(userWithoutPassword);
   } catch (err) {
     console.error('Register error:', err);
@@ -75,24 +86,47 @@ app.post('/auth/register', async (req, res) => {
   }
 });
 
-// Register
-/*app.post('/auth/register', async (req, res) => {
-  const { email, password, username } = req.body;
+// Mot de passe oublié
+app.post('/auth/forgot-password', async (req, res) => {
+  const { email } = req.body;
   try {
-    const existing = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (existing.rows.length > 0) return res.status(400).json({ message: 'Cet email est déjà utilisé' });
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = result.rows[0];
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await pool.query(
-      'INSERT INTO users (email, password, username, role, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [email, hashedPassword, username, 'member', 'pending']
-    );
-    const { password: _, ...userWithoutPassword } = result.rows[0];
-    res.json(userWithoutPassword);
+    if (!user) {
+      return res.status(404).json({ message: 'Aucun compte trouvé avec cet email' });
+    }
+
+    const tempPassword = crypto.randomBytes(4).toString('hex');
+    const hashedTempPassword = await bcrypt.hash(tempPassword, 10);
+
+    await pool.query('UPDATE users SET password = $1 WHERE email = $2', [hashedTempPassword, email]);
+
+    await transporter.sendMail({
+      from: `"MetalBlog 🤘" <${process.env.MAIL_USER}>`,
+      to: email,
+      subject: '🤘 MetalBlog - Mot de passe temporaire',
+      html: `
+        <div style="background-color:#0a0a0a;color:#ccc;padding:2rem;font-family:Arial,sans-serif;max-width:500px;margin:0 auto;border:1px solid #8b0000;border-radius:8px;">
+          <h1 style="color:#cc0000;text-align:center;text-transform:uppercase;letter-spacing:3px;">🤘 MetalBlog</h1>
+          <p>Bonjour <strong style="color:#fff">${user.username}</strong>,</p>
+          <p>Tu as demandé un mot de passe temporaire. Le voici :</p>
+          <div style="background-color:#1a1a1a;border:1px solid #8b0000;border-radius:6px;padding:1rem;text-align:center;margin:1.5rem 0;">
+            <span style="color:#cc0000;font-size:1.5rem;font-weight:bold;letter-spacing:3px;">${tempPassword}</span>
+          </div>
+          <p style="color:#999;">⚠️ Ce mot de passe est valable <strong style="color:#fff">24 heures</strong>.</p>
+          <p style="color:#999;">Connecte-toi et change ton mot de passe dès que possible !</p>
+          <p style="color:#666;font-size:0.85rem;margin-top:2rem;">Si tu n'as pas fait cette demande, ignore cet email.</p>
+        </div>
+      `
+    });
+
+    res.json({ message: 'Un mot de passe temporaire a été envoyé à ton email !' });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur' });
+    console.error('Forgot password error:', err.message);
+    res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'email' });
   }
-});*/
+});
 
 // =================== USERS ===================
 
@@ -165,10 +199,10 @@ app.get('/articles/:id', async (req, res) => {
     if (result.rows.length === 0) return res.status(404).json({ message: 'Article introuvable' });
     res.json(result.rows[0]);
   } catch (err) {
-
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
+
 // Create article
 app.post('/articles', async (req, res) => {
   const { title, category, date, author, summary, content, image, tags, photos, video_url } = req.body;
@@ -199,35 +233,6 @@ app.put('/articles/:id', async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
-
-// Create article
-/*app.post('/articles', async (req, res) => {
-  const { title, category, date, author, summary, content, image, tags } = req.body;
-  try {
-    const result = await pool.query(
-      'INSERT INTO articles (title, category, date, author, summary, content, image, tags) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-      [title, category, date, author, summary, content, image, tags]
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-});
-
-// Update article
-app.put('/articles/:id', async (req, res) => {
-  const { id } = req.params;
-  const { title, category, date, author, summary, content, image, tags } = req.body;
-  try {
-    const result = await pool.query(
-      'UPDATE articles SET title=$1, category=$2, date=$3, author=$4, summary=$5, content=$6, image=$7, tags=$8 WHERE id=$9 RETURNING *',
-      [title, category, date, author, summary, content, image, tags, id]
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-});*/
 
 // Delete article
 app.delete('/articles/:id', async (req, res) => {

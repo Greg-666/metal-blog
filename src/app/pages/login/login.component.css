@@ -54,6 +54,16 @@
   letter-spacing: 3px;
   margin-bottom: 0.5rem;
 }
+.login-header h2 {
+  color: #aaa;
+  font-size: 0.85rem;
+  text-transform: lowercase;
+  letter-spacing: 3px;
+  font-style: italic;
+  margin-bottom: 2rem;
+  font-weight: normal;
+  text-align: center;
+}
 
 .login-header p {
   color: #666;
@@ -131,9 +141,12 @@
 
 .login-footer {
   text-align: center;
-  margin-top: 1.5rem;
-  color: #666;
+  margin-top: 1rem;
+  color: #aaa;
   font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
 .toggle-link {

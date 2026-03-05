@@ -1,27 +1,42 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule,],
+  imports: [FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
   isLoginMode = true;
+  isForgotMode = false;
   email = '';
   password = '';
   username = '';
+  forgotEmail = '';
   errorMessage = '';
   successMessage = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private http: HttpClient
+  ) {}
 
   toggleMode(): void {
     this.isLoginMode = !this.isLoginMode;
+    this.isForgotMode = false;
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  toggleForgotMode(): void {
+    this.isForgotMode = !this.isForgotMode;
+    this.isLoginMode = !this.isForgotMode;
     this.errorMessage = '';
     this.successMessage = '';
   }
@@ -35,6 +50,8 @@ export class LoginComponent {
         next: (user) => {
           if (user.role === 'admin') {
             this.router.navigate(['/admin']);
+          } else if (user.role === 'moderator') {
+            this.router.navigate(['/moderator']);
           } else {
             this.router.navigate(['/']);
           }
@@ -55,10 +72,26 @@ export class LoginComponent {
           this.password = '';
           this.username = '';
         },
-        error: () => {
-          this.errorMessage = 'Une erreur est survenue, réessayez.';
+        error: (err) => {
+          this.errorMessage = err.message;
         }
       });
     }
+  }
+
+  submitForgotPassword(): void {
+    if (!this.forgotEmail.trim()) {
+      this.errorMessage = 'Veuillez entrer votre email';
+      return;
+    }
+    this.http.post<any>('http://localhost:3000/auth/forgot-password', { email: this.forgotEmail }).subscribe({
+      next: (res) => {
+        this.successMessage = res.message;
+        this.forgotEmail = '';
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Erreur lors de l\'envoi';
+      }
+    });
   }
 }
