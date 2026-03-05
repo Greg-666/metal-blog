@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import {SafeUrlPipe} from '../../pipes/safe-url.pipe';
+import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
+import { environment } from '../../../environments/environment';
 
 interface Article {
   id?: number;
@@ -21,7 +22,7 @@ interface Article {
 @Component({
   selector: 'app-article-form',
   standalone: true,
-  imports: [FormsModule,SafeUrlPipe],
+  imports: [FormsModule, SafeUrlPipe],
   templateUrl: './article-form.component.html',
   styleUrl: './article-form.component.css'
 })
@@ -32,6 +33,7 @@ export class ArticleFormComponent implements OnInit {
   photoInput = '';
   selectedCategory = '';
   customCategory = '';
+  private apiUrl = environment.apiUrl;
 
   article: Article = {
     title: '',
@@ -67,7 +69,7 @@ export class ArticleFormComponent implements OnInit {
     this.articleId = Number(this.route.snapshot.paramMap.get('id'));
     if (this.articleId) {
       this.isEditMode = true;
-      this.http.get<Article>(`http://localhost:3000/articles/${this.articleId}`).subscribe(article => {
+      this.http.get<Article>(`${this.apiUrl}/articles/${this.articleId}`).subscribe(article => {
         this.article = article;
         this.tagInput = article.tags.join(', ');
         this.photoInput = article.photos ? article.photos.join('\n') : '';
@@ -89,7 +91,6 @@ export class ArticleFormComponent implements OnInit {
 
   applyCustomCategory(): void {
     if (this.customCategory.trim()) {
-      this.categories.push(this.customCategory.trim());
       this.article.category = this.customCategory.trim();
     }
   }
@@ -130,12 +131,12 @@ export class ArticleFormComponent implements OnInit {
     }
 
     if (this.isEditMode) {
-      this.http.put(`http://localhost:3000/articles/${this.articleId}`, this.article).subscribe(() => {
+      this.http.put(`${this.apiUrl}/articles/${this.articleId}`, this.article).subscribe(() => {
         this.router.navigate(['/admin']);
       });
     } else {
       this.article.date = new Date().toISOString().split('T')[0];
-      this.http.post('http://localhost:3000/articles', this.article).subscribe(() => {
+      this.http.post(`${this.apiUrl}/articles`, this.article).subscribe(() => {
         this.router.navigate(['/admin']);
       });
     }

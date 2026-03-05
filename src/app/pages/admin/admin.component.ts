@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService, User } from '../../services/auth.service';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 interface Article {
   id: number;
@@ -24,6 +25,7 @@ export class AdminComponent implements OnInit {
   users: User[] = [];
   pendingUsers: User[] = [];
   articles: Article[] = [];
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, public authService: AuthService) {}
 
@@ -36,45 +38,45 @@ export class AdminComponent implements OnInit {
   }
 
   loadUsers(): void {
-    this.http.get<User[]>('http://localhost:3000/users').subscribe(users => {
+    this.http.get<User[]>(`${this.apiUrl}/users`).subscribe(users => {
       this.users = users.filter(u => u.status === 'approved' && u.role !== 'admin');
       this.pendingUsers = users.filter(u => u.status === 'pending');
     });
   }
 
   loadArticles(): void {
-    this.http.get<Article[]>('http://localhost:3000/articles').subscribe(articles => {
+    this.http.get<Article[]>(`${this.apiUrl}/articles`).subscribe(articles => {
       this.articles = articles;
     });
   }
 
   approveUser(user: User): void {
-    this.http.patch(`http://localhost:3000/users/${user.id}`, { status: 'approved' }).subscribe(() => {
+    this.http.patch(`${this.apiUrl}/users/${user.id}`, { status: 'approved' }).subscribe(() => {
       this.loadUsers();
     });
   }
 
   rejectUser(user: User): void {
-    this.http.patch(`http://localhost:3000/users/${user.id}`, { status: 'rejected' }).subscribe(() => {
+    this.http.patch(`${this.apiUrl}/users/${user.id}`, { status: 'rejected' }).subscribe(() => {
       this.loadUsers();
     });
   }
 
   promoteToModerator(user: User): void {
-    this.http.patch(`http://localhost:3000/users/${user.id}`, { role: 'moderator' }).subscribe(() => {
+    this.http.patch(`${this.apiUrl}/users/${user.id}`, { role: 'moderator' }).subscribe(() => {
       this.loadUsers();
     });
   }
 
   demoteToMember(user: User): void {
-    this.http.patch(`http://localhost:3000/users/${user.id}`, { role: 'member' }).subscribe(() => {
+    this.http.patch(`${this.apiUrl}/users/${user.id}`, { role: 'member' }).subscribe(() => {
       this.loadUsers();
     });
   }
 
   deleteUser(user: User): void {
     if (confirm(`Supprimer l'utilisateur ${user.username} ?`)) {
-      this.http.delete(`http://localhost:3000/users/${user.id}`).subscribe(() => {
+      this.http.delete(`${this.apiUrl}/users/${user.id}`).subscribe(() => {
         this.loadUsers();
       });
     }
@@ -82,7 +84,7 @@ export class AdminComponent implements OnInit {
 
   deleteArticle(article: Article): void {
     if (confirm(`Supprimer l'article "${article.title}" ?`)) {
-      this.http.delete(`http://localhost:3000/articles/${article.id}`).subscribe(() => {
+      this.http.delete(`${this.apiUrl}/articles/${article.id}`).subscribe(() => {
         this.loadArticles();
       });
     }

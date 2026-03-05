@@ -27,7 +27,7 @@
       </div>
       @if (article.photos && article.photos.length > 0) {
         <div class="concert-photos">
-          <h2>📸 Photos du concert</h2>
+          <h2>📸 Photos </h2>
           <div class="photos-grid">
             @for (photo of article.photos; track photo) {
               <img [src]="photo" alt="photo concert" />
@@ -38,7 +38,7 @@
 
       @if (article.video_url) {
         <div class="concert-video">
-          <h2>🎥 Vidéo du concert</h2>
+          <h2>🎥 Vidéos</h2>
           <div class="youtube-embed">
             <iframe
               [src]="article.video_url | safeUrl"
@@ -78,7 +78,7 @@
           <h3>Laisser un commentaire</h3>
           <textarea
             [(ngModel)]="newComment"
-            placeholder="Ton commentaire metal... 🤘"
+            placeholder="Ton commentaire... 🤘"
             rows="4">
           </textarea>
           <button class="btn-submit" (click)="submitComment()">Envoyer 🤘</button>

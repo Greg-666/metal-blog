@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class LoginComponent {
   forgotEmail = '';
   errorMessage = '';
   successMessage = '';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private authService: AuthService,
@@ -84,7 +86,7 @@ export class LoginComponent {
       this.errorMessage = 'Veuillez entrer votre email';
       return;
     }
-    this.http.post<any>('http://localhost:3000/auth/forgot-password', { email: this.forgotEmail }).subscribe({
+    this.http.post<any>(`${this.apiUrl}/auth/forgot-password`, { email: this.forgotEmail }).subscribe({
       next: (res) => {
         this.successMessage = res.message;
         this.forgotEmail = '';
