@@ -41,7 +41,13 @@ const loginLimiter = rateLimit({
   legacyHeaders: false
 });
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://metal-blog-bgz513qi6-greg-666s-projects.vercel.app',
+    'http://localhost:4200'
+  ]
+}));
+//app.use(cors());
 app.use(express.json());
 
 // =================== AUTH ===================
