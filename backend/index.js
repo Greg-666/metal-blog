@@ -42,22 +42,19 @@ const loginLimiter = rateLimit({
 });
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (
-      !origin ||
-      origin.includes("vercel.app") ||
-      origin.includes("localhost")
-    ) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ['GET','POST','PUT','PATCH','DELETE'],
-  allowedHeaders: ['Content-Type','Authorization']
+  origin: [
+    "http://localhost:4200",
+    "https://metal-blog-p3ha4l2ln-greg-666s-projects.vercel.app"
+  ],
+  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"]
 }));
 
-app.options('*', cors());
+app.options("*", cors());
+
+//app.use(express.json());
+
+//app.options('*', cors());
 
 app.use(express.json());
 //app.use(cors());
