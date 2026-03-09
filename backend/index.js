@@ -25,7 +25,6 @@ const pool = new Pool({
 
 /* ================= MIDDLEWARE ================= */
 
-// CORS compatible Vercel + localhost
 app.use(cors({
   origin: true,
   methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
@@ -41,7 +40,7 @@ app.use(express.json());
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
-  message: { message: "Trop de tentatives. Réessayez dans 15 minutes." }
+  message: { message: "Trop de tentatives de connexion. Réessayez dans 15 minutes." }
 });
 
 /* ================= MAIL ================= */
@@ -58,7 +57,7 @@ const transporter = nodemailer.createTransport({
 
 // LOGIN
 app.post("/auth/login", loginLimiter, async (req,res)=>{
-  const {email,password} = req.body;
+  const {email,password}=req.body;
 
   try{
 
@@ -66,12 +65,18 @@ app.post("/auth/login", loginLimiter, async (req,res)=>{
       "SELECT * FROM users WHERE email=$1",[email]
     );
 
-    const user = result.rows[0];
+    const user=result.rows[0];
 
     if(!user)
       return res.status(401).json({message:"Identifiants incorrects"});
 
-    const valid = await bcrypt.compare(password,user.password);
+    if(user.status==="pending")
+      return res.status(403).json({message:"Compte en attente de validation"});
+
+    if(user.status==="rejected")
+      return res.status(403).json({message:"Compte refusé"});
+
+    const valid=await bcrypt.compare(password,user.password);
 
     if(!valid)
       return res.status(401).json({message:"Identifiants incorrects"});
@@ -93,16 +98,16 @@ app.post("/auth/register", async (req,res)=>{
 
   try{
 
-    const existing = await pool.query(
+    const existing=await pool.query(
       "SELECT * FROM users WHERE email=$1",[email]
     );
 
     if(existing.rows.length>0)
       return res.status(400).json({message:"Email déjà utilisé"});
 
-    const hashed = await bcrypt.hash(password,10);
+    const hashed=await bcrypt.hash(password,10);
 
-    const result = await pool.query(
+    const result=await pool.query(
       `INSERT INTO users (email,password,username,role,status)
        VALUES ($1,$2,$3,$4,$5)
        RETURNING *`,
@@ -114,21 +119,43 @@ app.post("/auth/register", async (req,res)=>{
     res.status(201).json(safeUser);
 
   }catch(err){
-    console.error(err);
     res.status(500).json({message:"Erreur serveur"});
   }
 });
 
-/* ================= ARTICLES ================= */
+// FORGOT PASSWORD
+app.post("/auth/forgot-password", async (req,res)=>{
 
-app.get("/articles", async(req,res)=>{
+  const {email}=req.body;
+
   try{
 
-    const result = await pool.query(
-      "SELECT * FROM articles ORDER BY date DESC"
+    const result=await pool.query(
+      "SELECT * FROM users WHERE email=$1",[email]
     );
 
-    res.json(result.rows);
+    const user=result.rows[0];
+
+    if(!user)
+      return res.status(404).json({message:"Aucun compte trouvé"});
+
+    const tempPassword=crypto.randomBytes(4).toString("hex");
+
+    const hashed=await bcrypt.hash(tempPassword,10);
+
+    await pool.query(
+      "UPDATE users SET password=$1 WHERE email=$2",
+      [hashed,email]
+    );
+
+    await transporter.sendMail({
+      from:`MetalBlog <${process.env.MAIL_USER}>`,
+      to:email,
+      subject:"Mot de passe temporaire",
+      html:`Ton mot de passe temporaire : <b>${tempPassword}</b>`
+    });
+
+    res.json({message:"Mot de passe temporaire envoyé"});
 
   }catch(err){
     console.error(err);
@@ -136,11 +163,88 @@ app.get("/articles", async(req,res)=>{
   }
 });
 
+/* ================= USERS ================= */
+
+// GET USERS
+app.get("/users", async(req,res)=>{
+
+  try{
+
+    const result=await pool.query(
+      "SELECT id,email,username,role,status FROM users"
+    );
+
+    res.json(result.rows);
+
+  }catch(err){
+    res.status(500).json({message:"Erreur serveur"});
+  }
+});
+
+// UPDATE USER
+app.patch("/users/:id", async(req,res)=>{
+
+  const {id}=req.params;
+  const {role,status}=req.body;
+
+  try{
+
+    const result=await pool.query(
+      `UPDATE users
+       SET role=$1,status=$2
+       WHERE id=$3
+       RETURNING id,email,username,role,status`,
+      [role,status,id]
+    );
+
+    res.json(result.rows[0]);
+
+  }catch(err){
+    res.status(500).json({message:"Erreur serveur"});
+  }
+});
+
+// DELETE USER
+app.delete("/users/:id", async(req,res)=>{
+
+  try{
+
+    await pool.query(
+      "DELETE FROM users WHERE id=$1",
+      [req.params.id]
+    );
+
+    res.json({message:"Utilisateur supprimé"});
+
+  }catch(err){
+    res.status(500).json({message:"Erreur serveur"});
+  }
+});
+
+/* ================= ARTICLES ================= */
+
+// GET ALL ARTICLES
+app.get("/articles", async(req,res)=>{
+
+  try{
+
+    const result=await pool.query(
+      "SELECT * FROM articles ORDER BY date DESC"
+    );
+
+    res.json(result.rows);
+
+  }catch(err){
+    res.status(500).json({message:"Erreur serveur"});
+  }
+});
+
+// GET ONE ARTICLE
 app.get("/articles/:id", async(req,res)=>{
 
   try{
 
-    const result = await pool.query(
+    const result=await pool.query(
       "SELECT * FROM articles WHERE id=$1",
       [req.params.id]
     );
@@ -155,13 +259,18 @@ app.get("/articles/:id", async(req,res)=>{
   }
 });
 
+// CREATE ARTICLE
 app.post("/articles", async(req,res)=>{
 
-  const {title,category,date,author,summary,content,image,tags,photos,video_url} = req.body;
+  const {
+    title,category,date,author,
+    summary,content,image,
+    tags,photos,video_url
+  }=req.body;
 
   try{
 
-    const result = await pool.query(
+    const result=await pool.query(
       `INSERT INTO articles
       (title,category,date,author,summary,content,image,tags,photos,video_url)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
@@ -177,15 +286,64 @@ app.post("/articles", async(req,res)=>{
   }
 });
 
+// UPDATE ARTICLE
+app.put("/articles/:id", async(req,res)=>{
+
+  const {id}=req.params;
+
+  const {
+    title,category,date,author,
+    summary,content,image,
+    tags,photos,video_url
+  }=req.body;
+
+  try{
+
+    const result=await pool.query(
+      `UPDATE articles
+       SET title=$1,category=$2,date=$3,author=$4,
+           summary=$5,content=$6,image=$7,
+           tags=$8,photos=$9,video_url=$10
+       WHERE id=$11
+       RETURNING *`,
+      [title,category,date,author,summary,content,image,tags,photos||[],video_url||null,id]
+    );
+
+    res.json(result.rows[0]);
+
+  }catch(err){
+    console.error(err);
+    res.status(500).json({message:"Erreur serveur"});
+  }
+});
+
+// DELETE ARTICLE
+app.delete("/articles/:id", async(req,res)=>{
+
+  try{
+
+    await pool.query(
+      "DELETE FROM articles WHERE id=$1",
+      [req.params.id]
+    );
+
+    res.json({message:"Article supprimé"});
+
+  }catch(err){
+    res.status(500).json({message:"Erreur serveur"});
+  }
+});
+
 /* ================= COMMENTS ================= */
 
+// GET COMMENTS
 app.get("/comments", async(req,res)=>{
 
   const {articleId}=req.query;
 
   try{
 
-    const result = await pool.query(
+    const result=await pool.query(
       "SELECT * FROM comments WHERE article_id=$1 ORDER BY date ASC",
       [articleId]
     );
@@ -197,14 +355,16 @@ app.get("/comments", async(req,res)=>{
   }
 });
 
+// ADD COMMENT
 app.post("/comments", async(req,res)=>{
 
   const {articleId,content,author}=req.body;
 
   try{
 
-    const result = await pool.query(
-      `INSERT INTO comments (article_id,content,author,date)
+    const result=await pool.query(
+      `INSERT INTO comments
+       (article_id,content,author,date)
        VALUES ($1,$2,$3,$4)
        RETURNING *`,
       [articleId,content,author,new Date().toISOString()]
@@ -217,9 +377,26 @@ app.post("/comments", async(req,res)=>{
   }
 });
 
+// DELETE COMMENT
+app.delete("/comments/:id", async(req,res)=>{
+
+  try{
+
+    await pool.query(
+      "DELETE FROM comments WHERE id=$1",
+      [req.params.id]
+    );
+
+    res.json({message:"Commentaire supprimé"});
+
+  }catch(err){
+    res.status(500).json({message:"Erreur serveur"});
+  }
+});
+
 /* ================= SERVER ================= */
 
-const PORT = process.env.PORT || 3000;
+const PORT=process.env.PORT||3000;
 
 app.listen(PORT,()=>{
   console.log(`MetalBlog backend running on port ${PORT}`);
