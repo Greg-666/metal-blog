@@ -42,13 +42,28 @@ const loginLimiter = rateLimit({
 });
 
 app.use(cors({
-  origin: [
-    'https://metal-blog-bgz513qi6-greg-666s-projects.vercel.app',
-    'http://localhost:4200'
-  ]
+  origin: (origin, callback) => {
+    if (
+      !origin ||
+      origin.includes("vercel.app") ||
+      origin.includes("localhost")
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ['GET','POST','PUT','PATCH','DELETE'],
+  allowedHeaders: ['Content-Type','Authorization']
 }));
+
+app.options('*', cors());
+
+app.use(express.json());
 //app.use(cors());
 app.use(express.json());
+
+app.use('/media', express.static('media'));
 
 // =================== AUTH ===================
 
