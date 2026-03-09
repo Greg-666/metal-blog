@@ -22,6 +22,7 @@ export class LoginComponent {
   errorMessage = '';
   successMessage = '';
   private apiUrl = environment.apiUrl;
+  country = '';
 
   constructor(
     private authService: AuthService,
@@ -67,7 +68,7 @@ export class LoginComponent {
         this.errorMessage = 'Tous les champs sont obligatoires';
         return;
       }
-      this.authService.register(this.email, this.password, this.username).subscribe({
+      this.authService.register(this.email, this.password, this.username,this.country).subscribe({
         next: () => {
           this.successMessage = 'Demande envoyée ! En attente de validation par l\'admin.';
           this.email = '';
@@ -96,4 +97,5 @@ export class LoginComponent {
       }
     });
   }
+  showPassword = false;
 }

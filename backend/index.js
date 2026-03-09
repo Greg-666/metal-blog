@@ -91,8 +91,28 @@ app.post("/auth/login", loginLimiter, async (req,res)=>{
   }
 });
 
+
 // REGISTER
-app.post("/auth/register", async (req,res)=>{
+app.post('/auth/register', async (req, res) => {
+  const { email, password, username, country } = req.body;
+  try {
+    const existing = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (existing.rows.length > 0) return res.status(400).json({ message: 'Cet email est déjà utilisé' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      'INSERT INTO users (email, password, username, role, status, country) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [email, hashedPassword, username, 'member', 'pending', country || null]
+    );
+    const { password: _, ...userWithoutPassword } = result.rows[0];
+    res.status(201).json(userWithoutPassword);
+  } catch (err) {
+    console.error('Register error:', err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+/*app.post("/auth/register", async (req,res)=>{
 
   const {email,password,username}=req.body;
 
@@ -121,7 +141,7 @@ app.post("/auth/register", async (req,res)=>{
   }catch(err){
     res.status(500).json({message:"Erreur serveur"});
   }
-});
+});*/
 
 // FORGOT PASSWORD
 app.post("/auth/forgot-password", async (req,res)=>{

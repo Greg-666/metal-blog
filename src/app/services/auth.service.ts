@@ -12,6 +12,7 @@ export interface User {
   username: string;
   role: 'admin' | 'moderator' | 'member';
   status: 'approved' | 'pending' | 'rejected';
+  country? : String;
 }
 
 @Injectable({
@@ -50,13 +51,21 @@ export class AuthService {
     );
   }
 
-  register(email: string, password: string, username: string): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/auth/register`, { email, password, username }).pipe(
+  register(email: string, password: string, username: string, country: string): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/auth/register`, { email, password, username, country }).pipe(
       catchError(err => {
         throw new Error(err.error?.message || 'Erreur lors de l\'inscription');
       })
     );
   }
+
+ /* register(email: string, password: string, username: string): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/auth/register`, { email, password, username }).pipe(
+      catchError(err => {
+        throw new Error(err.error?.message || 'Erreur lors de l\'inscription');
+      })
+    );
+  }*/
 
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {

@@ -9,15 +9,24 @@
 
 .video-background {
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.video-background iframe {
+  position: absolute;
   top: 50%;
   left: 50%;
+  width: 100vw;
+  height: 56.25vw;
+  min-height: 100vh;
+  min-width: 177.77vh;
   transform: translate(-50%, -50%);
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  z-index: 0;
-  object-fit: cover;
+  pointer-events: none;
 }
 
 .video-overlay {
@@ -157,4 +166,46 @@
 
 .toggle-link:hover {
   color: #ff0000;
+}
+.password-group .password-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input input {
+  width: 100%;
+  padding-right: 3rem;
+}
+
+.btn-eye {
+  position: absolute;
+  right: 0.8rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  width: auto;
+}
+select {
+  width: 100%;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: #8b0000;
+}
+
+select option {
+  background-color: #1a1a1a;
+  color: #fff;
 }
