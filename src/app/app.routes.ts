@@ -10,6 +10,7 @@ import {adminGuard} from './guards/admin.guard';
 import {SearchComponent} from './pages/search/search.component';
 import {ArticleFormComponent} from './pages/article-form/article-form.component';
 import {moderatorGuard} from './guards/moderator.guard';
+import {ProfileComponent} from './pages/profile/profile.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -17,6 +18,7 @@ export const routes: Routes = [
   { path: 'categories', component: CategoriesComponent },
   { path: 'about', component: AboutComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard, adminGuard] },
   { path: 'search', component: SearchComponent },
   { path: 'admin/article/new', component: ArticleFormComponent, canActivate: [authGuard, adminGuard] },

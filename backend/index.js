@@ -13,15 +13,22 @@ const app = express();
 const { Pool } = pg;
 
 /* ================= DATABASE ================= */
-
 const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.DB_HOST.includes('neon.tech') ? { rejectUnauthorized: false } : false
 });
+/*const pool = new Pool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  ssl: { rejectUnauthorized: false }
+});*/
 
 /* ================= MIDDLEWARE ================= */
 
@@ -417,6 +424,41 @@ app.delete("/comments/:id", async(req,res)=>{
 /* ================= SERVER ================= */
 
 const PORT=process.env.PORT||3000;
+
+// Obtenir le profil utilisateur
+app.get('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('SELECT id, email, username, role, status, country FROM users WHERE id = $1', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Mettre à jour le profil utilisateur
+app.put('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  const { username, country, password } = req.body;
+  try {
+    let query, params;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      query = 'UPDATE users SET username = $1, country = $2, password = $3 WHERE id = $4 RETURNING id, email, username, role, status, country';
+      params = [username, country, hashedPassword, id];
+    } else {
+      query = 'UPDATE users SET username = $1, country = $2 WHERE id = $3 RETURNING id, email, username, role, status, country';
+      params = [username, country, id];
+    }
+    const result = await pool.query(query, params);
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
 
 app.listen(PORT,()=>{
   console.log(`MetalBlog backend running on port ${PORT}`);

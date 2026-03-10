@@ -24,7 +24,7 @@
       @if (user.role === 'moderator') {
         <li><a routerLink="/moderator" routerLinkActive="active">Modération</a></li>
       }
-      <li><span class="username">👤 {{ user.username }}</span></li>
+      <li><a routerLink="/profile" routerLinkActive="active">👤 {{ user.username }} {{ user.country }}</a></li>
       <li><button class="btn-logout" (click)="logout()">Déconnexion</button></li>
     } @else {
       <li><a routerLink="/login" routerLinkActive="active">Connexion</a></li>

@@ -12,7 +12,7 @@ export interface User {
   username: string;
   role: 'admin' | 'moderator' | 'member';
   status: 'approved' | 'pending' | 'rejected';
-  country? : String;
+  country? : string;
 }
 
 @Injectable({
@@ -90,5 +90,16 @@ export class AuthService {
   isModerator(): boolean {
     const role = this.currentUserSubject.value?.role;
     return role === 'moderator' || role === 'admin';
+  }
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/users/${id}`);
+  }
+
+  updateUser(id: number, data: { username: string, country: string, password?: string }): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/users/${id}`, data);
+  }
+  updateCurrentUser(user: User): void {
+    this.currentUserSubject.next(user);
+    localStorage.setItem('currentUser', JSON.stringify(user));
   }
 }

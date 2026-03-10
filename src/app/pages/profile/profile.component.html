@@ -1,0 +1,75 @@
+<div class="profile-page">
+  <div class="profile-header">
+    <h1>👤 Mon Profil</h1>
+    <p>Gérer mes informations personnelles</p>
+  </div>
+
+  <div class="profile-card">
+    @if (user) {
+      <div class="profile-info">
+        <div class="profile-avatar">
+          {{ user.username.charAt(0).toUpperCase() }}
+        </div>
+        <div class="profile-meta">
+          <span class="profile-role">
+            {{ user.role === 'admin' ? '🛡️ Admin' : user.role === 'moderator' ? '🛡️ Modérateur' : '👥 Membre' }}
+          </span>
+          <span class="profile-email">{{ user.email }}</span>
+          @if (user.country) {
+            <span class="profile-country">{{ user.country }}</span>
+          }
+        </div>
+      </div>
+
+      @if (errorMessage) {
+        <div class="alert error">{{ errorMessage }}</div>
+      }
+      @if (successMessage) {
+        <div class="alert success">{{ successMessage }}</div>
+      }
+
+      <div class="profile-form">
+        <div class="form-group">
+          <label>Pseudo</label>
+          <input type="text" [(ngModel)]="username" placeholder="Ton pseudo metal..." />
+        </div>
+
+        <div class="form-group">
+          <label>Pays</label>
+          <select [(ngModel)]="country">
+            <option value="">🌍 Choisir ton pays</option>
+            @for (c of countries; track c.flag) {
+              <option [value]="c.flag">{{ c.flag }} {{ c.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-divider">
+          <span>Changer le mot de passe (optionnel)</span>
+        </div>
+
+        <div class="form-group">
+          <label>Nouveau mot de passe</label>
+          <div class="password-input">
+            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="newPassword" placeholder="Laisser vide pour ne pas changer" />
+            <button class="btn-eye" type="button" (click)="showPassword = !showPassword">
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Confirmer le mot de passe</label>
+          <div class="password-input">
+            <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword" placeholder="Confirmer le nouveau mot de passe" />
+            <button class="btn-eye" type="button" (click)="showConfirmPassword = !showConfirmPassword">
+              {{ showConfirmPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-submit" (click)="onSubmit()">💾 Sauvegarder</button>
+      </div>
+    }
+  </div>
+</div>
