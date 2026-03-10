@@ -106,3 +106,14 @@
     padding: 1rem;
   }
 }
+.language-banner {
+  text-align: center;
+  padding: 1rem 2rem;
+  background-color: #111;
+  border-top: 1px solid #8b0000;
+  border-bottom: 1px solid #8b0000;
+  color: #aaa;
+  font-size: 0.9rem;
+  font-style: italic;
+  letter-spacing: 1px;
+}

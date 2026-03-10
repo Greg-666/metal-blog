@@ -49,6 +49,8 @@ export class ArticleFormComponent implements OnInit {
   };
 
   categories = [
+    'Rock n Roll',
+    'Hard-Rock',
     'Heavy Metal',
     'Thrash Metal',
     'Black Metal',

@@ -72,13 +72,13 @@
 
         <div class="form-group">
           <label>Email</label>
-          <input type="email" [(ngModel)]="email" placeholder="email@metalblog.com" />
+          <input type="email" [(ngModel)]="email" placeholder="email@metalblog.com" (keyup.enter)="onSubmit()"  />
         </div>
 
         <div class="form-group password-group">
           <label>Mot de passe</label>
           <div class="password-input">
-            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" placeholder="••••••••" />
+            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" placeholder="••••••••"  (keyup.enter)="onSubmit()" />
             <button class="btn-eye" type="button" (click)="showPassword = !showPassword">
               {{ showPassword ? '🙈' : '👁️' }}
             </button>

@@ -53,11 +53,15 @@
       <p class="content">{{ article.content }}</p>
     </div>
 
+    <div class="language-note">
+      <p>🌍 Feel free to comment in your language! /  Puedes comentar en tu idioma!</p>
+    </div>
+
     <div class="comments-section">
       <h2>💬 Commentaires ({{ comments.length }})</h2>
 
       @if (comments.length === 0) {
-        <p class="no-comments">Aucun commentaire pour l'instant. Sois le premier ! 🤘</p>
+        <p class="no-comments">Aucun commentaire pour l'instant. Sois le premier ! <br> No comment yet, be the first! <br>  ningún comentario, sé el primero!🤘</p>
       }
 
       @for (comment of comments; track comment.id) {
@@ -78,7 +82,7 @@
           <h3>Laisser un commentaire</h3>
           <textarea
             [(ngModel)]="newComment"
-            placeholder="Ton commentaire... 🤘"
+            placeholder="Ton commentaire... your comment... tu comentario... 🤘"
             rows="4">
           </textarea>
           <button class="btn-submit" (click)="submitComment()">Envoyer 🤘</button>

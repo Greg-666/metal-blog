@@ -333,6 +333,15 @@ h1 {
     padding: 0 1rem;
   }
 }
+.language-note {
+  text-align: center;
+  padding: 0.8rem;
+  color: #ccc;
+  font-size: 1rem;
+  font-style: italic;
+  border-top: 1px solid #1a1a1a;
+  margin-bottom: 1rem;
+}
 @media (max-width: 768px) {
   h1 {
     font-size: 1.5rem;
