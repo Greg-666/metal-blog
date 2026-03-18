@@ -51,25 +51,25 @@ export class AdminComponent implements OnInit {
   }
 
   approveUser(user: User): void {
-    this.http.patch(`${this.apiUrl}/users/${user.id}`, { status: 'approved' }).subscribe(() => {
+    this.http.patch(`${this.apiUrl}/users/${user.id}`, { role: user.role || 'member', status: 'approved' }).subscribe(() => {
       this.loadUsers();
     });
   }
 
   rejectUser(user: User): void {
-    this.http.patch(`${this.apiUrl}/users/${user.id}`, { status: 'rejected' }).subscribe(() => {
+    this.http.patch(`${this.apiUrl}/users/${user.id}`, { role: user.role || 'member', status: 'rejected' }).subscribe(() => {
       this.loadUsers();
     });
   }
 
   promoteToModerator(user: User): void {
-    this.http.patch(`${this.apiUrl}/users/${user.id}`, { role: 'moderator' }).subscribe(() => {
+    this.http.patch(`${this.apiUrl}/users/${user.id}`, { role: 'moderator', status: 'approved' }).subscribe(() => {
       this.loadUsers();
     });
   }
 
   demoteToMember(user: User): void {
-    this.http.patch(`${this.apiUrl}/users/${user.id}`, { role: 'member' }).subscribe(() => {
+    this.http.patch(`${this.apiUrl}/users/${user.id}`, { role: 'member', status: 'approved' }).subscribe(() => {
       this.loadUsers();
     });
   }

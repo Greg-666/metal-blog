@@ -145,16 +145,19 @@ app.patch("/users/:id", async(req,res)=>{
   const {id}=req.params;
   const {role,status}=req.body;
   try{
+    // D'abord récupérer le role actuel
+    const current = await pool.query('SELECT role FROM users WHERE id=$1', [id]);
+    const currentRole = current.rows[0]?.role || 'member';
+    const newRole = role || currentRole;
+
     const result=await pool.query(
-      `UPDATE users
-       SET role=CASE WHEN $1 IS NOT NULL AND $1 != '' THEN $1 ELSE COALESCE(role, 'member') END,
-           status=$2
-       WHERE id=$3
+      `UPDATE users SET role=$1, status=$2 WHERE id=$3
        RETURNING id,email,username,role,status`,
-      [role||null, status, id]
+      [newRole, status, id]
     );
     res.json(result.rows[0]);
   }catch(err){
+    console.error('PATCH error:', err);
     res.status(500).json({message:"Erreur serveur"});
   }
 });
@@ -302,6 +305,29 @@ app.delete("/comments/:id", async(req,res)=>{
 /* ================= SERVER ================= */
 
 const PORT=process.env.PORT||3000;
+// CONTACT
+app.post("/contact", async (req, res) => {
+  const { name, email, message } = req.body;
+  try {
+    await transporter.sendMail({
+      from: `MetalBlog Contact <${process.env.MAIL_USER}>`,
+      to: process.env.MAIL_USER,
+      replyTo: email,
+      subject: `[MetalBlog] Message de ${name}`,
+      html: `
+        <h3>Nouveau message de contact</h3>
+        <p><b>Nom :</b> ${name}</p>
+        <p><b>Email :</b> ${email}</p>
+        <p><b>Message :</b></p>
+        <p>${message}</p>
+      `
+    });
+    res.json({ message: 'Message envoyé' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur lors de l\'envoi' });
+  }
+});
 
 app.listen(PORT,()=>{
   console.log(`MetalBlog backend running on port ${PORT}`);

@@ -24,30 +24,46 @@
       <div class="team-grid">
         <div class="team-card">
           <div class="team-avatar">🤘</div>
-          <h3>IronPen</h3>
-          <p>Spécialiste Heavy Metal & Thrash</p>
+          <h3>Greg</h3>
+          <p>Fondateur & Admin</p>
         </div>
+        <!-- Modérateurs à ajouter ultérieurement -->
+        <!--
         <div class="team-card">
           <div class="team-avatar">🖤</div>
-          <h3>FrostWriter</h3>
-          <p>Expert Black Metal & Atmosphérique</p>
+          <h3>Prénom modérateur</h3>
+          <p>Spécialité</p>
         </div>
-        <div class="team-card">
-          <div class="team-avatar">💀</div>
-          <h3>ThrashQueen</h3>
-          <p>Passionnée Death & Thrash Metal</p>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar">🔥</div>
-          <h3>SlowBurn</h3>
-          <p>Chroniqueur Doom & Stoner Metal</p>
-        </div>
+        -->
       </div>
     </div>
 
     <div class="about-section contact">
-      <h2>📬 Contact</h2>
-      <p>Une suggestion, une collaboration ? Contactez-nous à <span class="email"></span></p>
+      <h2>📬 Contactez-nous</h2>
+      <p>Une suggestion ou plainte? envie de devenir modérateur et pouvoir t'occuper d'une catégorie ?<br> Remplissez le formulaire ci-dessous !</p>
+
+      @if (successMessage) {
+        <div class="alert success">{{ successMessage }}</div>
+      }
+      @if (errorMessage) {
+        <div class="alert error">{{ errorMessage }}</div>
+      }
+
+      <div class="contact-form">
+        <div class="form-group">
+          <label>Votre nom</label>
+          <input type="text" [(ngModel)]="contactName" placeholder="Votre nom..." />
+        </div>
+        <div class="form-group">
+          <label>Votre email</label>
+          <input type="email" [(ngModel)]="contactEmail" placeholder="votre@email.com" />
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea [(ngModel)]="contactMessage" placeholder="Votre message..." rows="5"></textarea>
+        </div>
+        <button class="btn-submit" (click)="sendContact()">📨 Envoyer</button>
+      </div>
     </div>
   </div>
 </div>
