@@ -7,8 +7,8 @@
   <div class="profile-card">
     @if (user) {
       <div class="profile-info">
-        <div class="profile-avatar">
-          {{ user.username.charAt(0).toUpperCase() }}
+        <div class="profile-avatar" [style.background-color]="avatarColor">
+          {{ avatarEmoji }}
         </div>
         <div class="profile-meta">
           <span class="profile-role">
@@ -42,6 +42,41 @@
               <option [value]="c.flag">{{ c.flag }} {{ c.name }}</option>
             }
           </select>
+        </div>
+
+        <div class="form-group">
+          <label>Icône de l'avatar</label>
+          <div class="emoji-picker">
+            @for (emoji of emojis; track emoji) {
+              <div
+                class="emoji-swatch"
+                [class.selected]="avatarEmoji === emoji"
+                (click)="avatarEmoji = emoji">
+                {{ emoji }}
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Couleur de l'avatar</label>
+          <div class="color-picker">
+            @for (color of colors; track color) {
+              <div
+                class="color-swatch"
+                [style.background-color]="color"
+                [class.selected]="avatarColor === color"
+                (click)="avatarColor = color">
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Aperçu</label>
+          <div class="avatar-preview" [style.background-color]="avatarColor">
+            {{ avatarEmoji }}
+          </div>
         </div>
 
         <div class="form-divider">

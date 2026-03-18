@@ -15,12 +15,30 @@ export class ProfileComponent implements OnInit {
   user: User | null = null;
   username = '';
   country = '';
+  avatarColor = '#8b0000';
+  avatarEmoji = '🤘';
   newPassword = '';
   confirmPassword = '';
   showPassword = false;
   showConfirmPassword = false;
   successMessage = '';
   errorMessage = '';
+
+  emojis = [
+    '🤘', '🎸', '💀', '🔥', '⚡',
+    '♠️', '☠️', '🎵', '🎶', '🥁',
+    '🦇', '🐺', '🐉', '⚔️', '🛡️',
+    '💣', '🔱', '🌑', '🩸', '👁️'
+  ];
+
+  colors = [
+    '#8b0000', '#cc0000', '#ff0000',
+    '#1a1a2e', '#16213e', '#0f3460',
+    '#2d4a1e', '#1a3a1a', '#0d2b0d',
+    '#4a2d1e', '#3a1a0d', '#2b0d00',
+    '#4a1e4a', '#3a0d3a', '#2b002b',
+    '#1e1e1e', '#333333', '#555555'
+  ];
 
   countries = [
     { flag: '🇧🇪', name: 'Belgique' },
@@ -50,7 +68,9 @@ export class ProfileComponent implements OnInit {
     this.user = this.authService.getCurrentUser();
     if (this.user) {
       this.username = this.user.username;
-      this.country = this.user.country || '';
+      this.country = this.user.country as string || '';
+      this.avatarColor = this.user.avatar_color || '#8b0000';
+      this.avatarEmoji = this.user.avatar_emoji || '🤘';
     }
   }
 
@@ -68,7 +88,12 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    const data: any = { username: this.username, country: this.country };
+    const data: any = {
+      username: this.username,
+      country: this.country,
+      avatar_color: this.avatarColor,
+      avatar_emoji: this.avatarEmoji
+    };
     if (this.newPassword) data.password = this.newPassword;
 
     this.authService.updateUser(this.user!.id!, data).subscribe({

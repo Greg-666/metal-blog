@@ -13,6 +13,8 @@ export interface User {
   role: 'admin' | 'moderator' | 'member';
   status: 'approved' | 'pending' | 'rejected';
   country? : string;
+  avatar_color?: string;
+  avatar_emoji?: string;
 }
 
 @Injectable({

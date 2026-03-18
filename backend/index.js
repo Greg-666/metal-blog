@@ -81,8 +81,8 @@ app.post('/auth/register', async (req, res) => {
     if (existing.rows.length > 0) return res.status(400).json({ message: 'Cet email est déjà utilisé' });
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      'INSERT INTO users (email, password, username, role, status, country) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [email, hashedPassword, username, 'member', 'pending', country || null]
+      'INSERT INTO users (email, password, username, role, status, country, avatar_color, avatar_emoji) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      [email, hashedPassword, username, 'member', 'pending', country || null, '#8b0000', '🤘']
     );
     const { password: _, ...userWithoutPassword } = result.rows[0];
     res.status(201).json(userWithoutPassword);
@@ -120,7 +120,9 @@ app.post("/auth/forgot-password", async (req,res)=>{
 // GET ALL USERS
 app.get("/users", async(req,res)=>{
   try{
-    const result=await pool.query("SELECT id,email,username,role,status,country FROM users");
+    const result=await pool.query(
+      "SELECT id,email,username,role,status,country,avatar_color,avatar_emoji FROM users"
+    );
     res.json(result.rows);
   }catch(err){
     res.status(500).json({message:"Erreur serveur"});
@@ -131,7 +133,9 @@ app.get("/users", async(req,res)=>{
 app.get('/users/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('SELECT id, email, username, role, status, country FROM users WHERE id = $1', [id]);
+    const result = await pool.query(
+      'SELECT id, email, username, role, status, country, avatar_color, avatar_emoji FROM users WHERE id = $1', [id]
+    );
     if (result.rows.length === 0) return res.status(404).json({ message: 'Utilisateur non trouvé' });
     res.json(result.rows[0]);
   } catch (err) {
@@ -145,14 +149,12 @@ app.patch("/users/:id", async(req,res)=>{
   const {id}=req.params;
   const {role,status}=req.body;
   try{
-    // D'abord récupérer le role actuel
     const current = await pool.query('SELECT role FROM users WHERE id=$1', [id]);
     const currentRole = current.rows[0]?.role || 'member';
     const newRole = role || currentRole;
-
     const result=await pool.query(
       `UPDATE users SET role=$1, status=$2 WHERE id=$3
-       RETURNING id,email,username,role,status`,
+        RETURNING id,email,username,role,status`,
       [newRole, status, id]
     );
     res.json(result.rows[0]);
@@ -162,19 +164,19 @@ app.patch("/users/:id", async(req,res)=>{
   }
 });
 
-// UPDATE USER PROFILE (username, country, password)
+// UPDATE USER PROFILE (username, country, password, avatar_color, avatar_emoji)
 app.put('/users/:id', async (req, res) => {
   const { id } = req.params;
-  const { username, country, password } = req.body;
+  const { username, country, password, avatar_color, avatar_emoji } = req.body;
   try {
     let query, params;
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      query = 'UPDATE users SET username = $1, country = $2, password = $3 WHERE id = $4 RETURNING id, email, username, role, status, country';
-      params = [username, country, hashedPassword, id];
+      query = 'UPDATE users SET username = $1, country = $2, password = $3, avatar_color = $4, avatar_emoji = $5 WHERE id = $6 RETURNING id, email, username, role, status, country, avatar_color, avatar_emoji';
+      params = [username, country, hashedPassword, avatar_color || '#8b0000', avatar_emoji || '🤘', id];
     } else {
-      query = 'UPDATE users SET username = $1, country = $2 WHERE id = $3 RETURNING id, email, username, role, status, country';
-      params = [username, country, id];
+      query = 'UPDATE users SET username = $1, country = $2, avatar_color = $3, avatar_emoji = $4 WHERE id = $5 RETURNING id, email, username, role, status, country, avatar_color, avatar_emoji';
+      params = [username, country, avatar_color || '#8b0000', avatar_emoji || '🤘', id];
     }
     const result = await pool.query(query, params);
     res.json(result.rows[0]);
@@ -302,10 +304,8 @@ app.delete("/comments/:id", async(req,res)=>{
   }
 });
 
-/* ================= SERVER ================= */
+/* ================= CONTACT ================= */
 
-const PORT=process.env.PORT||3000;
-// CONTACT
 app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
   try {
@@ -328,6 +328,10 @@ app.post("/contact", async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de l\'envoi' });
   }
 });
+
+/* ================= SERVER ================= */
+
+const PORT=process.env.PORT||3000;
 
 app.listen(PORT,()=>{
   console.log(`MetalBlog backend running on port ${PORT}`);
