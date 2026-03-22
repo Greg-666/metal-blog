@@ -13,18 +13,18 @@ import {moderatorGuard} from './guards/moderator.guard';
 import {ProfileComponent} from './pages/profile/profile.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'article/:id', component: ArticleDetailComponent },
-  { path: 'categories', component: CategoriesComponent },
-  { path: 'about', component: AboutComponent },
   { path: 'login', component: LoginComponent },
+  { path: '', component: HomeComponent, canActivate: [authGuard] },
+  { path: 'article/:id', component: ArticleDetailComponent, canActivate: [authGuard] },
+  { path: 'categories', component: CategoriesComponent, canActivate: [authGuard] },
+  { path: 'about', component: AboutComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard, adminGuard] },
-  { path: 'search', component: SearchComponent },
+  { path: 'search', component: SearchComponent, canActivate: [authGuard] },
   { path: 'admin/article/new', component: ArticleFormComponent, canActivate: [authGuard, adminGuard] },
   { path: 'admin/article/edit/:id', component: ArticleFormComponent, canActivate: [authGuard, adminGuard] },
   { path: 'moderator', component: AdminComponent, canActivate: [authGuard, moderatorGuard] },
   { path: 'moderator/article/new', component: ArticleFormComponent, canActivate: [authGuard, moderatorGuard] },
   { path: 'moderator/article/edit/:id', component: ArticleFormComponent, canActivate: [authGuard, moderatorGuard] },
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: 'login' }
 ];
