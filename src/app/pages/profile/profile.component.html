@@ -105,6 +105,61 @@
 
         <button class="btn-submit" (click)="onSubmit()">💾 Sauvegarder</button>
       </div>
+
+      <!-- Section suppression de compte -->
+      <div class="delete-section">
+        <div class="form-divider danger">
+          <span>Zone de danger</span>
+        </div>
+
+        @if (!showDeleteSection) {
+          <button class="btn-delete-account" (click)="showDeleteSection = true">
+            🗑️ Supprimer mon compte
+          </button>
+        }
+
+        @if (showDeleteSection) {
+          <div class="delete-card">
+            <p class="delete-warning">⚠️ Cette action est irréversible. Ton compte sera définitivement supprimé.</p>
+
+            @if (deleteMessage) {
+              <div class="alert success">{{ deleteMessage }}</div>
+            }
+            @if (deleteError) {
+              <div class="alert error">{{ deleteError }}</div>
+            }
+
+            @if (!deleteCodeSent) {
+              <div class="delete-actions">
+                <button class="btn-danger" (click)="requestDelete()">
+                  📧 Envoyer le code de confirmation
+                </button>
+                <button class="btn-cancel" (click)="showDeleteSection = false">
+                  Annuler
+                </button>
+              </div>
+            } @else {
+              <div class="form-group">
+                <label>Code de confirmation</label>
+                <input
+                  type="text"
+                  [(ngModel)]="deleteCode"
+                  placeholder="Saisis le code reçu par email..."
+                  style="text-transform: uppercase; letter-spacing: 4px; text-align: center;"
+                />
+              </div>
+              <div class="delete-actions">
+                <button class="btn-danger" (click)="confirmDelete()">
+                  🗑️ Confirmer la suppression
+                </button>
+                <button class="btn-cancel" (click)="showDeleteSection = false; deleteCodeSent = false; deleteCode = ''">
+                  Annuler
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
     }
   </div>
 </div>

@@ -196,6 +196,67 @@ app.delete("/users/:id", async(req,res)=>{
   }
 });
 
+// DEMANDE DE SUPPRESSION - envoie le code par mail
+app.post("/users/:id/request-delete", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE id=$1', [id]);
+    const user = result.rows[0];
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    const deleteCode = crypto.randomBytes(3).toString("hex").toUpperCase();
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    await pool.query(
+      'UPDATE users SET delete_code=$1, delete_code_expires=$2 WHERE id=$3',
+      [deleteCode, expires, id]
+    );
+
+    await transporter.sendMail({
+      from: `MetalBlog <${process.env.MAIL_USER}>`,
+      to: user.email,
+      subject: "Confirmation de suppression de compte",
+      html: `
+        <h3>Suppression de ton compte MetalBlog</h3>
+        <p>Tu as demandé la suppression de ton compte.</p>
+        <p>Ton code de confirmation : <b style="font-size:24px">${deleteCode}</b></p>
+        <p>Ce code est valable 15 minutes.</p>
+        <p>Si tu n'as pas fait cette demande, ignore cet email.</p>
+      `
+    });
+
+    res.json({ message: 'Code envoyé par email' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// CONFIRMATION DE SUPPRESSION - vérifie le code et supprime
+app.post("/users/:id/confirm-delete", async (req, res) => {
+  const { id } = req.params;
+  const { code } = req.body;
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE id=$1', [id]);
+    const user = result.rows[0];
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    if (!user.delete_code || user.delete_code !== code) {
+      return res.status(400).json({ message: 'Code incorrect' });
+    }
+
+    if (new Date() > new Date(user.delete_code_expires)) {
+      return res.status(400).json({ message: 'Code expiré, recommence la procédure' });
+    }
+
+    await pool.query('DELETE FROM users WHERE id=$1', [id]);
+    res.json({ message: 'Compte supprimé avec succès' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
 /* ================= ARTICLES ================= */
 
 // GET ALL ARTICLES
