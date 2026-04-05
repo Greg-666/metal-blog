@@ -104,4 +104,11 @@ export class AuthService {
     this.currentUserSubject.next(user);
     localStorage.setItem('currentUser', JSON.stringify(user));
   }
+  requestDeleteAccount(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/${id}/request-delete`, {});
+  }
+
+  confirmDeleteAccount(id: number, code: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/${id}/confirm-delete`, { code });
+  }
 }

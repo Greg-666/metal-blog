@@ -24,6 +24,13 @@ export class ProfileComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
 
+  // Suppression de compte
+  showDeleteSection = false;
+  deleteCodeSent = false;
+  deleteCode = '';
+  deleteMessage = '';
+  deleteError = '';
+
   emojis = [
     '🤘', '🎸', '💀', '🔥', '⚡',
     '♠️', '☠️', '🎵', '🎶', '🥁',
@@ -105,6 +112,37 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.errorMessage = err.message || 'Erreur lors de la mise à jour.';
+      }
+    });
+  }
+
+  requestDelete(): void {
+    this.deleteError = '';
+    this.deleteMessage = '';
+    this.authService.requestDeleteAccount(this.user!.id!).subscribe({
+      next: () => {
+        this.deleteCodeSent = true;
+        this.deleteMessage = 'Un code de confirmation a été envoyé à ton email. Il est valable 15 minutes.';
+      },
+      error: () => {
+        this.deleteError = 'Erreur lors de l\'envoi du code.';
+      }
+    });
+  }
+
+  confirmDelete(): void {
+    this.deleteError = '';
+    if (!this.deleteCode.trim()) {
+      this.deleteError = 'Saisis le code reçu par email.';
+      return;
+    }
+    this.authService.confirmDeleteAccount(this.user!.id!, this.deleteCode).subscribe({
+      next: () => {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.deleteError = err.error?.message || 'Code incorrect ou expiré.';
       }
     });
   }

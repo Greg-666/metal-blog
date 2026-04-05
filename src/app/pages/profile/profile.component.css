@@ -261,3 +261,88 @@
   border-color: #cc0000;
   transform: scale(1.2);
 }
+.delete-section {
+  margin-top: 2rem;
+}
+
+.form-divider.danger span {
+  color: #cc0000;
+}
+
+.btn-delete-account {
+  width: 100%;
+  background-color: transparent;
+  color: #cc0000;
+  border: 1px solid #cc0000;
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 1rem;
+}
+
+.btn-delete-account:hover {
+  background-color: #cc0000;
+  color: #fff;
+}
+
+.delete-card {
+  background-color: #1a0000;
+  border: 1px solid #8b0000;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.delete-warning {
+  color: #ff6666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.delete-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-danger {
+  flex: 1;
+  background-color: #8b0000;
+  color: #fff;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-danger:hover {
+  background-color: #cc0000;
+}
+
+.btn-cancel {
+  flex: 1;
+  background-color: transparent;
+  color: #666;
+  border: 1px solid #333;
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+  border-color: #666;
+  color: #fff;
+}
