@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -23,13 +25,8 @@ export class ProfileComponent implements OnInit {
   showConfirmPassword = false;
   successMessage = '';
   errorMessage = '';
-
-  // Suppression de compte
   showDeleteSection = false;
-  deleteCodeSent = false;
-  deleteCode = '';
-  deleteMessage = '';
-  deleteError = '';
+  private apiUrl = environment.apiUrl;
 
   emojis = [
     '🤘', '🎸', '💀', '🔥', '⚡',
@@ -69,7 +66,11 @@ export class ProfileComponent implements OnInit {
     { flag: '🌍', name: 'Autre' }
   ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     this.user = this.authService.getCurrentUser();
@@ -116,34 +117,17 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  requestDelete(): void {
-    this.deleteError = '';
-    this.deleteMessage = '';
-    this.authService.requestDeleteAccount(this.user!.id!).subscribe({
-      next: () => {
-        this.deleteCodeSent = true;
-        this.deleteMessage = 'Un code de confirmation a été envoyé à ton email. Il est valable 15 minutes.';
-      },
-      error: () => {
-        this.deleteError = 'Erreur lors de l\'envoi du code.';
-      }
-    });
-  }
-
-  confirmDelete(): void {
-    this.deleteError = '';
-    if (!this.deleteCode.trim()) {
-      this.deleteError = 'Saisis le code reçu par email.';
-      return;
+  deleteAccount(): void {
+    if (confirm('⚠️ Es-tu sûr de vouloir supprimer ton compte ? Cette action est irréversible !')) {
+      this.http.delete(`${this.apiUrl}/users/${this.user!.id}`).subscribe({
+        next: () => {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        },
+        error: () => {
+          this.errorMessage = 'Erreur lors de la suppression du compte.';
+        }
+      });
     }
-    this.authService.confirmDeleteAccount(this.user!.id!, this.deleteCode).subscribe({
-      next: () => {
-        this.authService.logout();
-        this.router.navigate(['/login']);
-      },
-      error: (err) => {
-        this.deleteError = err.error?.message || 'Code incorrect ou expiré.';
-      }
-    });
   }
 }
